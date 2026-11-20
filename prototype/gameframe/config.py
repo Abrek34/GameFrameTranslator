@@ -78,7 +78,7 @@ class TranslateConfig:
     libre_endpoint: str = ""
     dict_path: str = ""
     retry_cooldown_ms: int = 2000
-    max_translations_per_cycle: int = 4
+    max_translations_per_cycle: int = 6
 
 
 @dataclass
