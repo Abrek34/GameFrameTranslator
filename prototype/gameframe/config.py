@@ -42,7 +42,7 @@ class AnalyzerConfig:
     heartbeat_ms: int = 1500
     expire_ms: int = 1000
     region_padding: int = 6
-    max_regions: int = 32
+    max_regions: int = 96
     max_region_ocr_per_cycle: int = 4
     min_dirty_frames: int = 1
     max_analysis_fps: float = 15.0

@@ -220,8 +220,13 @@ class Pipeline:
                     did_ocr = self._discover(frame, now) or did_ocr
         elif due and diff.changed_ratio >= self.cfg.analyzer.change_trigger:
             did_ocr = self._discover(frame, now)
-        elif now - self._last_discovery_ns >= heartbeat_ns and diff.changed_ratio > 0.0005:
-            did_ocr = self._discover(frame, now)
+        elif now - self._last_discovery_ns >= heartbeat_ns:
+            # Statik ekranda kaçan metinleri bulmak için periyodik tam keşif.
+            # Çok bölge varsa limiter'ı zorlamamak için daha seyrek çalış.
+            if len(self.tracker) < 20 or diff.changed_ratio > 0.0005:
+                did_ocr = self._discover(frame, now)
+            elif now - self._last_discovery_ns >= heartbeat_ns * 3:
+                did_ocr = self._discover(frame, now)
 
         # OCR sırasında yeni metinler oluştu; çeviri kuyruğunu boşalt.
         translated = self._translate_pending(now)
