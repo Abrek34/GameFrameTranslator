@@ -87,9 +87,9 @@ class OverlayConfig:
     monitor: int = 1
     gdk_backend: str = "x11"  # Wayland'de XWayland overlay; native için Faz 2 layer-shell
     font_family: str = "Noto Sans"
-    font_size: int = 20
+    font_size: int = 16
     min_font_size: int = 10
-    bg_alpha: float = 0.80
+    bg_alpha: float = 0.95
     bg_color: str = "#0b0d12"
     text_color: str = "#ffffff"
     show_original: bool = False

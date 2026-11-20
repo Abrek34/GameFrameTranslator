@@ -74,9 +74,9 @@ struct OverlayConfig {
     int monitor{1};
     std::string gdkBackend{"x11"};
     std::string fontFamily{"Noto Sans"};
-    int fontSize{20};
+    int fontSize{16};
     int minFontSize{10};
-    double bgAlpha{0.80};
+    double bgAlpha{0.95};
     std::string bgColor{"#0b0d12"};
     std::string textColor{"#ffffff"};
     bool showOriginal{false};
