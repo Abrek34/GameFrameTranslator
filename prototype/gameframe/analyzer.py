@@ -201,6 +201,11 @@ class RegionTracker:
                     if not region.dirty:
                         region.dirty = True
                         region.last_changed_ns = now_ns
+                        # İçerik değişti: eski çeviriyi ekranda tutma.
+                        region.translation = ""
+                        region.translation_provider = ""
+                        region.stale = True
+                        region.last_translate_attempt_ns = 0
                     dirty.append(region)
             else:
                 region.dirty_frames = 0

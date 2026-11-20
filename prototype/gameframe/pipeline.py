@@ -201,12 +201,20 @@ class Pipeline:
         heartbeat_ns = int(self.cfg.analyzer.heartbeat_ms) * 1_000_000
         due = now - self._last_discovery_ns >= discovery_interval_ns
 
+        # Büyük sahne değişimlerinde bölge-bölge OCR yavaş kalır; keşif OCR
+        # tüm metinleri tek seferde günceller.
+        big_change = diff.changed_ratio >= 0.08 or len(dirty) >= 6
+
         if len(self.tracker) == 0:
+            did_ocr = self._discover(frame, now)
+        elif big_change and due:
             did_ocr = self._discover(frame, now)
         elif dirty:
             did_ocr = self._ocr_dirty(frame, dirty, now)
-            # Takip edilmeyen değişen piksel varsa keşif OCR'ı da yap.
-            if diff.changed_bbox is not None:
+            # Takip edilmeyen değişen piksel varsa veya çok bölge kirliyse keşif yap.
+            if due and (len(dirty) >= 3 or diff.changed_ratio >= 0.04):
+                did_ocr = self._discover(frame, now) or did_ocr
+            elif diff.changed_bbox is not None:
                 covered = any(r.rect.iou(diff.changed_bbox) > 0.1 for r in self.tracker.regions)
                 if not covered and self.limiter.allow():
                     did_ocr = self._discover(frame, now) or did_ocr
