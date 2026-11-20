@@ -425,13 +425,14 @@ class RegionTracker:
         rect = lines[0].rect
         for line in lines[1:]:
             rect = rect.union(line.rect)
-        region.rect = rect
+        smooth_rect = self._smooth_rect(region.rect, rect) if merged == region.text else rect
+        region.rect = smooth_rect
         region.last_ocr_ns = now_ns
         region.last_present_ns = now_ns
         region.misses = 0
         region.dirty = False
         region.dirty_frames = 0
-        region.signature = self._signature_for_screen_rect(frame, rect)
+        region.signature = self._signature_for_screen_rect(frame, smooth_rect)
         if merged == region.text:
             if region.translation:
                 region.stale = False
