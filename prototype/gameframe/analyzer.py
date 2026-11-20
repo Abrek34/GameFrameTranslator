@@ -327,16 +327,16 @@ class RegionTracker:
             if keep:
                 lines = keep
         if not lines:
-            region.misses += 1
-            # Tek/two OCR kaçırması bölgeyi silmesin; crop/psm geçici olarak
-            # başarısız olabilir. Kalıcı kaybolmayı TTL temizler.
-            if region.misses >= 4:
-                log.info("Bölge [%d] metni kayboldu, kaldırılıyor", region_id)
-                self._regions.pop(region_id, None)
+            # Bölge dirty iken OCR metin bulamadıysa içerik kaybolmuş veya
+            # değişmiş demektir; eski çeviriyi ekranda bırakma.
+            log.info("Bölge [%d] metni bulunamadı, kaldırılıyor", region_id)
+            self._regions.pop(region_id, None)
             return
         merged = " ".join(normalize_text(l.text) for l in lines)
         merged = normalize_text(merged)
         if not merged:
+            log.info("Bölge [%d] boş metin, kaldırılıyor", region_id)
+            self._regions.pop(region_id, None)
             return
         rect = lines[0].rect
         for line in lines[1:]:
