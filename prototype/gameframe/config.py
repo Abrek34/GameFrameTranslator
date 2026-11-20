@@ -33,7 +33,7 @@ class CaptureConfig:
 
 @dataclass
 class AnalyzerConfig:
-    analysis_width: int = 640
+    analysis_width: int = 480
     grid: int = 16
     pixel_threshold: int = 16
     change_trigger: float = 0.0025  # tam karede değişen piksel oranı
@@ -43,7 +43,7 @@ class AnalyzerConfig:
     expire_ms: int = 2000
     region_padding: int = 6
     max_regions: int = 32
-    max_region_ocr_per_cycle: int = 2
+    max_region_ocr_per_cycle: int = 4
     min_dirty_frames: int = 1
     max_analysis_fps: float = 15.0
 
@@ -55,13 +55,13 @@ class OcrConfig:
     psm: int = 11
     region_psm: int = 7
     min_confidence: float = 45.0
-    max_calls_per_sec: float = 4.0
+    max_calls_per_sec: float = 6.0
     burst: int = 2
     upscale: float = 1.0
     region_upscale: float = 1.5
     auto_upscale_below_px: int = 26
     min_text_height: int = 8
-    timeout_s: float = 5.0
+    timeout_s: float = 2.0
     tesseract_cmd: str = "tesseract"
     omp_thread_limit: int = 2
 

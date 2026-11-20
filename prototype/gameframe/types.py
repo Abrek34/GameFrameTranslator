@@ -160,6 +160,8 @@ class TextRegion:
     stale: bool = False
     dirty: bool = False
     dirty_frames: int = 0
+    candidate_text: str = ""
+    candidate_count: int = 0
     misses: int = 0
     first_seen_ns: int = 0
     last_changed_ns: int = 0
