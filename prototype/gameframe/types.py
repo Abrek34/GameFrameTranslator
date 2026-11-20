@@ -182,6 +182,7 @@ class OverlayItem:
     text: str
     source_text: str = ""
     stale: bool = False
+    translated_at_ns: int = 0
 
 
 @dataclass

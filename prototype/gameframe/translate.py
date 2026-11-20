@@ -376,17 +376,20 @@ class DictionaryTranslator:
         if len(words) <= 1:
             return None
         out = []
-        changed = False
+        changed = 0
         for w in words:
             tr = self._map.get(w.casefold().strip(".,!?;:"))
             if tr:
                 out.append(tr)
-                changed = True
+                changed += 1
             else:
                 out.append(w)
-        if changed:
-            return " ".join(out)
-        return None
+        # Yalnızca anlamlı ölçüde çevrilebilen cümlelerde kısmi çeviri döndür.
+        if changed == 0:
+            return None
+        if len(words) > 2 and changed < 2:
+            return None
+        return " ".join(out)
 
 
 # ---------------------------------------------------------------------------

@@ -280,6 +280,9 @@ class RegionTracker:
                     log.info("Metin değişti [%d]: %r -> %r", match.id, match.text, text)
                     match.text = text
                     match.revision += 1
+                    # Eski çeviri artık geçersiz; overlay'de üst üste binmeyi önle.
+                    match.translation = ""
+                    match.translation_provider = ""
                     match.stale = True
                     match.last_changed_ns = now_ns
                     match.last_translate_attempt_ns = 0
@@ -349,6 +352,8 @@ class RegionTracker:
             log.info("Bölge metni değişti [%d]: %r -> %r", region_id, region.text, merged)
             region.text = merged
             region.revision += 1
+            region.translation = ""
+            region.translation_provider = ""
             region.stale = True
             region.last_changed_ns = now_ns
             region.last_translate_attempt_ns = 0
@@ -412,10 +417,18 @@ class RegionTracker:
                     text=r.translation,
                     source_text=r.text,
                     stale=r.stale,
+                    translated_at_ns=r.translated_at_ns,
                 )
             )
-        items.sort(key=lambda i: (i.rect.y, i.rect.x))
-        return items
+        # Örtüşen kutuları tekilleştir: daha yeni çeviri kazanır.
+        items.sort(key=lambda i: i.translated_at_ns, reverse=True)
+        kept: list[OverlayItem] = []
+        for it in items:
+            if any(k.rect.iou(it.rect) > 0.6 for k in kept):
+                continue
+            kept.append(it)
+        kept.sort(key=lambda i: (i.rect.y, i.rect.x))
+        return kept
 
     def debug_counts(self) -> tuple[int, int, int]:
         stale = sum(1 for r in self._regions.values() if r.stale)

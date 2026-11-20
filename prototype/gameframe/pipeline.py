@@ -161,6 +161,10 @@ class Pipeline:
             if frame is None:
                 if self._stop.is_set():
                     break
+                # 2 sn kare gelmezse overlay'i temizle (oyun kapandı).
+                if time.monotonic_ns() - getattr(self, "_last_frame_ns", 0) > 2_000_000_000 and self.models.get()[0] is not None:
+                    self.models.publish(OverlayModel(items=[], updated_at_ns=time.monotonic_ns(), debug="no frames"))
+                    self.metrics.inc("overlay_updates")
                 continue
             last_version = version
             try:
@@ -174,6 +178,7 @@ class Pipeline:
     # ------------------------------------------------------------------
     def _process(self, frame: Frame) -> None:
         now = time.monotonic_ns()
+        self._last_frame_ns = now
         max_fps = float(getattr(self.cfg.analyzer, "max_analysis_fps", 0.0) or 0.0)
         if max_fps > 0:
             min_interval_ns = int(1_000_000_000.0 / max_fps)
