@@ -259,10 +259,88 @@ class RegionTracker:
             return RegionSignature(0, np.zeros((16, 16), dtype=np.uint8))
         return signature_from_rgb(frame.crop(local))
 
+    @staticmethod
+    def _merge_ocr_lines(lines: list[OcrLine]) -> list[OcrLine]:
+        """Yakın OCR satırlarını birleştirerek daha doğru kutu/konum üret."""
+        items = [l for l in lines if normalize_text(l.text)]
+        if not items:
+            return []
+        items.sort(key=lambda l: (l.rect.y, l.rect.x))
+        merged: list[OcrLine] = []
+        used = [False] * len(items)
+        for i, base in enumerate(items):
+            if used[i]:
+                continue
+            used[i] = True
+            group = [base]
+            rect = base.rect
+            confs = [base.confidence]
+            changed = True
+            while changed:
+                changed = False
+                for j, other in enumerate(items):
+                    if used[j]:
+                        continue
+                    # Aynı satırda yatay yakın mı?
+                    cy1 = rect.center()[1]
+                    cy2 = other.rect.center()[1]
+                    same_line = abs(cy1 - cy2) <= max(6.0, 0.6 * min(rect.h, other.rect.h))
+                    h_gap = min(abs(other.rect.x - rect.right), abs(rect.x - other.rect.right))
+                    close_x = h_gap <= max(24.0, 1.2 * max(rect.h, other.rect.h))
+                    overlap_x = not (other.rect.right < rect.x - 4 or rect.right < other.rect.x - 4)
+                    # Alt satır (çok satırlı blok) mı?
+                    v_gap = other.rect.y - rect.bottom
+                    close_y = 0 <= v_gap <= max(8.0, 0.8 * rect.h)
+                    x_align = abs(other.rect.x - rect.x) <= max(20.0, 0.35 * max(rect.w, other.rect.w))
+                    if (same_line and (close_x or overlap_x)) or (close_y and x_align):
+                        used[j] = True
+                        group.append(other)
+                        rect = rect.union(other.rect)
+                        confs.append(other.confidence)
+                        changed = True
+            group.sort(key=lambda l: (l.rect.y, l.rect.x))
+            # Satır satır birleştir
+            lines_by_y: list[list[OcrLine]] = []
+            for g in group:
+                placed = False
+                for bucket in lines_by_y:
+                    if abs(bucket[0].rect.center()[1] - g.rect.center()[1]) <= max(6.0, 0.6 * bucket[0].rect.h):
+                        bucket.append(g)
+                        placed = True
+                        break
+                if not placed:
+                    lines_by_y.append([g])
+            text_lines = []
+            for bucket in sorted(lines_by_y, key=lambda b: b[0].rect.y):
+                bucket.sort(key=lambda l: l.rect.x)
+                text_lines.append(" ".join(normalize_text(x.text) for x in bucket if normalize_text(x.text)))
+            text = normalize_text("\n".join(t for t in text_lines if t))
+            if not text:
+                continue
+            merged.append(OcrLine(rect=rect, text=text, confidence=float(sum(confs) / len(confs)) if confs else 0.0))
+        merged.sort(key=lambda l: (l.rect.y, l.rect.x))
+        return merged
+
+    @staticmethod
+    def _smooth_rect(old: Rect, new: Rect) -> Rect:
+        # Jitter azalt: kutular çok yakınsa eski konumu koru, küçük farkta yumuşat.
+        if old.iou(new) > 0.85:
+            return old
+        ox, oy = old.center()
+        nx, ny = new.center()
+        if abs(ox - nx) <= 2 and abs(oy - ny) <= 2 and abs(old.w - new.w) <= 4 and abs(old.h - new.h) <= 4:
+            return old
+        x = int(round(old.x * 0.35 + new.x * 0.65))
+        y = int(round(old.y * 0.35 + new.y * 0.65))
+        w = int(round(old.w * 0.35 + new.w * 0.65))
+        h = int(round(old.h * 0.35 + new.h * 0.65))
+        return Rect(x, y, max(1, w), max(1, h))
+
     def ingest_full(self, frame: Frame, lines: Iterable[OcrLine], now_ns: int) -> None:
         """Tam kare OCR sonucunu mevcut bölgelerle eşleştirir, yenileri ekler."""
+        merged_lines = self._merge_ocr_lines(list(lines))
         ordered = sorted(
-            [l for l in lines if normalize_text(l.text)],
+            [l for l in merged_lines if normalize_text(l.text)],
             key=lambda l: l.rect.area,
             reverse=True,
         )
@@ -274,13 +352,14 @@ class RegionTracker:
             match = self._match(line, used)
             if match is not None:
                 used.add(match.id)
-                match.rect = line.rect
+                smooth_rect = self._smooth_rect(match.rect, line.rect) if match.text == text else line.rect
+                match.rect = smooth_rect
                 match.last_ocr_ns = now_ns
                 match.last_present_ns = now_ns
                 match.misses = 0
                 match.dirty = False
                 match.dirty_frames = 0
-                match.signature = self._signature_for_screen_rect(frame, line.rect)
+                match.signature = self._signature_for_screen_rect(frame, smooth_rect)
                 if text != match.text:
                     log.info("Metin değişti [%d]: %r -> %r", match.id, match.text, text)
                     match.text = text
