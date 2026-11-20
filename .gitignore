@@ -13,3 +13,6 @@ __pycache__/
 prototype/.pytest_cache/
 
 Testing/
+
+# local third-party deps
+third_party/

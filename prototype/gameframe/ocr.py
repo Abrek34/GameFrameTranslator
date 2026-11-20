@@ -297,11 +297,13 @@ def create_ocr(cfg: AppConfig) -> OcrEngine:
     if backend == "rapidocr":
         return RapidOcrEngine(cfg.ocr)
     if backend == "auto":
-        if shutil.which(cfg.ocr.tesseract_cmd):
-            return TesseractOcr(cfg.ocr)
+        # Hız/doğruluk için RapidOCR (ONNX) varsa önceliklendir.
         try:
             return RapidOcrEngine(cfg.ocr)
-        except OcrError:
-            log.error("OCR motoru bulunamadı; null backend kullanılıyor")
-            return NullOcr()
+        except Exception:
+            pass
+        if shutil.which(cfg.ocr.tesseract_cmd):
+            return TesseractOcr(cfg.ocr)
+        log.error("OCR motoru bulunamadı; null backend kullanılıyor")
+        return NullOcr()
     raise OcrError(f"Bilinmeyen OCR backend'i: {backend}")
