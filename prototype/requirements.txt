@@ -1,0 +1,8 @@
+mss>=10.0
+numpy>=1.26
+Pillow>=10.0
+PyYAML>=6.0
+# Opsiyonel:
+# python-xlib>=0.33        # XComposite pencere yakalama zaten mss dışında opsiyonel
+# rapidocr_onnxruntime>=1.3
+# onnxruntime>=1.17

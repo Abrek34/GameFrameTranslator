@@ -1,0 +1,75 @@
+# C++ çekirdek ayar örneği (config/gameframe.yaml)
+capture:
+  backend: auto
+  monitor: 1
+  window_title: ""
+  fps: 30
+  allow_root_with_overlay: false
+
+analyzer:
+  analysis_width: 640
+  grid: 16
+  pixel_threshold: 16
+  change_trigger: 0.0025
+  region_change: 0.015
+  discovery_ms: 700
+  heartbeat_ms: 3000
+  expire_ms: 6000
+  region_padding: 6
+  max_regions: 32
+  max_region_ocr_per_cycle: 2
+
+ocr:
+  backend: auto
+  lang: eng
+  psm: 11
+  region_psm: 7
+  min_confidence: 45
+  max_calls_per_sec: 4
+  burst: 2
+  upscale: 1.0
+  region_upscale: 1.5
+  auto_upscale_below_px: 26
+  min_text_height: 8
+  timeout_s: 5.0
+  tesseract_cmd: tesseract
+  omp_thread_limit: 2
+
+translate:
+  provider: auto
+  source_lang: en
+  target_lang: tr
+  timeout_s: 4.0
+  max_chars: 500
+  fallback: original
+  google_endpoint: "https://translate.googleapis.com/translate_a/single"
+  libre_endpoint: ""
+  dict_path: ""
+  retry_cooldown_ms: 2000
+  max_translations_per_cycle: 4
+
+overlay:
+  backend: auto
+  monitor: 1
+  font_family: "Noto Sans"
+  font_size: 20
+  min_font_size: 10
+  bg_alpha: 0.80
+  bg_color: "#0b0d12"
+  text_color: "#ffffff"
+  show_original: false
+  padding: 6
+  ttl_ms: 6000
+  click_through: true
+  debug: false
+  max_width_scale: 1.25
+
+cache:
+  path: "~/.cache/gameframe/translations.sqlite3"
+  memory_size: 512
+
+runtime:
+  log_dir: "~/.local/state/gameframe"
+  metrics_jsonl: true
+  debug: false
+  stats_interval_s: 1.0

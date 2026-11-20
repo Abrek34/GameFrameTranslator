@@ -1,0 +1,15 @@
+build/
+*.o
+*.so
+*.a
+__pycache__/
+*.pyc
+.venv/
+*.sqlite3
+*.sqlite3-*
+*.jsonl
+*.log
+.DS_Store
+prototype/.pytest_cache/
+
+Testing/

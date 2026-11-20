@@ -1,0 +1,16 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "gameframe-translator"
+version = "0.1.0"
+description = "GameFrame Translator - Phase 0 prototype"
+requires-python = ">=3.10"
+dependencies = ["mss>=10.0", "numpy>=1.26", "Pillow>=10.0", "PyYAML>=6.0"]
+
+[project.scripts]
+gft = "gameframe.app:main"
+
+[tool.setuptools]
+packages = ["gameframe"]
