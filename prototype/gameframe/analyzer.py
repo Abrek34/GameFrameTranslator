@@ -349,19 +349,8 @@ class RegionTracker:
         region.dirty_frames = 0
         region.signature = self._signature_for_screen_rect(frame, rect)
         if merged == region.text:
-            region.candidate_text = ""
-            region.candidate_count = 0
             if region.translation:
                 region.stale = False
-            return
-        # OCR jitter'ı önlemek için yeni metni 2 tutarlı okumada kabul et.
-        if merged == region.candidate_text:
-            region.candidate_count += 1
-        else:
-            region.candidate_text = merged
-            region.candidate_count = 1
-        if region.candidate_count < 2:
-            log.debug("Bölge [%d] aday metin bekleniyor (%d/2): %r", region_id, region.candidate_count, merged)
             return
         log.info("Bölge metni değişti [%d]: %r -> %r", region_id, region.text, merged)
         region.text = merged
@@ -371,8 +360,6 @@ class RegionTracker:
         region.stale = True
         region.last_changed_ns = now_ns
         region.last_translate_attempt_ns = 0
-        region.candidate_text = ""
-        region.candidate_count = 0
 
     # ------------------------------------------------------------------
     def pending_translations(self, now_ns: int, limit: int) -> list[TextRegion]:

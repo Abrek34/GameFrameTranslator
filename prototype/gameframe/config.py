@@ -40,7 +40,7 @@ class AnalyzerConfig:
     region_change: float = 0.015  # bölge küçük resminde ortalama fark
     discovery_ms: int = 500
     heartbeat_ms: int = 1500
-    expire_ms: int = 2000
+    expire_ms: int = 1000
     region_padding: int = 6
     max_regions: int = 32
     max_region_ocr_per_cycle: int = 4
@@ -94,7 +94,7 @@ class OverlayConfig:
     text_color: str = "#ffffff"
     show_original: bool = False
     padding: int = 6
-    ttl_ms: int = 1500
+    ttl_ms: int = 1000
     click_through: bool = True
     debug: bool = False
     max_width_scale: float = 1.25
