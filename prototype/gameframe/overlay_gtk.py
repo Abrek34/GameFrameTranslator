@@ -172,32 +172,43 @@ class GtkOverlay:
 
     def _draw_item(self, cr: cairo.Context, item: OverlayItem) -> None:
         pad = max(2, int(self.cfg.padding))
-        max_w = int(
-            min(
-                max(item.rect.w * self.cfg.max_width_scale, 160.0),
-                self._screen_w - item.rect.x - 8,
-            )
-        )
-        max_w = max(80, max_w)
-        y = max(0, item.rect.y)
-        max_h = max(80, min(self._screen_h - y - 8, max(item.rect.h * 4.0, 200.0)))
-        size = min(self.cfg.font_size, max(self.cfg.min_font_size, int(item.rect.h * 0.85)))
-        layout = self._layout(cr, item.text, max_w - 2 * pad, size)
+        # Orijinal metin alanına yakın kutu: konum ve boyut "tam otursun".
+        base_w = max(24, int(item.rect.w))
+        base_h = max(14, int(item.rect.h))
+        max_w = int(min(max(base_w * self.cfg.max_width_scale, base_w + 2 * pad), self._screen_w - item.rect.x - 8))
+        max_w = max(base_w, max_w)
+        max_h = int(min(max(base_h * 1.6, base_h + 2 * pad), self._screen_h - item.rect.y - 8))
+        max_h = max(base_h, max_h)
+
+        inner_w = max(20, max_w - 2 * pad)
+        inner_h = max(10, max_h - 2 * pad)
+        size = min(self.cfg.font_size, max(self.cfg.min_font_size, int(base_h * 0.90)))
+
+        layout = self._layout(cr, item.text, inner_w, size)
         tw, th = layout.get_pixel_size()
-        while th > max_h and size > self.cfg.min_font_size:
+        # Önce yüksekliğe sığdırmak için fontu küçült.
+        while th > inner_h and size > self.cfg.min_font_size:
             size -= 1
-            layout = self._layout(cr, item.text, max_w - 2 * pad, size)
+            layout = self._layout(cr, item.text, inner_w, size)
             tw, th = layout.get_pixel_size()
+
         source_layout = None
         source_h = 0
         if self.cfg.show_original and item.source_text:
-            source_layout = self._layout(cr, item.source_text, max_w - 2 * pad, max(self.cfg.min_font_size, size - 4))
+            source_layout = self._layout(cr, item.source_text, inner_w, max(self.cfg.min_font_size, size - 2))
             _sw, source_h = source_layout.get_pixel_size()
             source_h += 2
-        box_w = min(max_w, max(item.rect.w, tw + 2 * pad))
-        box_h = min(max_h, th + source_h + 2 * pad)
-        # Orijinal metin konumunu koru; kutu kaydırma "konum kayması" hissi yaratır.
-        # Üst üste binmeyi azaltmak için kutu boyutu ve metin temizliği yönetilir.
+            while th + source_h > inner_h and size > self.cfg.min_font_size:
+                size -= 1
+                layout = self._layout(cr, item.text, inner_w, size)
+                tw, th = layout.get_pixel_size()
+                source_layout = self._layout(cr, item.source_text, inner_w, max(self.cfg.min_font_size, size - 2))
+                _sw, source_h = source_layout.get_pixel_size()
+                source_h += 2
+
+        # Kutu orijinal alanı kaplasın; gerektiğinde sınırlı büyüsün.
+        box_w = min(max_w, max(base_w, tw + 2 * pad))
+        box_h = min(max_h, max(base_h, th + source_h + 2 * pad))
         x = max(0, min(item.rect.x, self._screen_w - box_w - 4))
         y = max(0, min(item.rect.y, self._screen_h - box_h - 4))
 
