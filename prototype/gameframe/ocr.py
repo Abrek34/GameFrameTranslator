@@ -92,11 +92,23 @@ class TesseractOcr(OcrEngine):
                 ),
                 dtype=np.uint8,
             )
+
+        # Oyun içi/HUD metinlerde kontrastı artır: gri + autocontrast.
+        # (Tesseract bazen renkli arka planda metni kaçırabiliyor.)
+        try:
+            img = Image.fromarray(crop).convert("L")
+            from PIL import ImageOps, ImageEnhance
+            img = ImageOps.autocontrast(img, cutoff=1)
+            img = ImageEnhance.Contrast(img).enhance(1.6)
+            img = ImageEnhance.Sharpness(img).enhance(1.3)
+        except Exception:
+            img = Image.fromarray(crop)
+
         tmp_path = ""
         try:
-            fd, tmp_path = tempfile.mkstemp(prefix="gft-ocr-", suffix=".ppm")
+            fd, tmp_path = tempfile.mkstemp(prefix="gft-ocr-", suffix=".png")
             os.close(fd)
-            Image.fromarray(crop).save(tmp_path, format="PPM")
+            img.save(tmp_path, format="PNG")
             cmd = [
                 self.cfg.tesseract_cmd,
                 tmp_path,

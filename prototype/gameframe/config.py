@@ -54,7 +54,7 @@ class OcrConfig:
     lang: str = "eng"
     psm: int = 11
     region_psm: int = 7
-    min_confidence: float = 45.0
+    min_confidence: float = 40.0
     max_calls_per_sec: float = 6.0
     burst: int = 2
     upscale: float = 1.0
