@@ -166,7 +166,17 @@ def run_once(cfg: AppConfig, args: argparse.Namespace) -> int:
         cache.close()
 
 
+def _set_parent_death_signal():
+    try:
+        import ctypes
+        libc = ctypes.CDLL("libc.so.6")
+        # PR_SET_PDEATHSIG = 1, SIGTERM = 15
+        libc.prctl(1, 15)
+    except Exception:
+        pass
+
 def run_app(cfg: AppConfig, args: argparse.Namespace) -> int:
+    _set_parent_death_signal()
     if cfg.capture.backend == "mss" and cfg.overlay.backend != "none" and not cfg.capture.allow_root_with_overlay:
         print(
             "Hata: root ekran yakalama + overlay birlikte overlay'in kendi çıktısını yakalar "

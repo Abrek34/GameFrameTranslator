@@ -149,6 +149,7 @@ class GtkOverlay:
         cr.paint()
         cr.set_operator(cairo.OPERATOR_OVER)
         model = self._model
+        self._occupied = []
         if model is not None:
             for item in model.items:
                 try:
@@ -180,7 +181,7 @@ class GtkOverlay:
         max_w = max(80, max_w)
         y = max(0, item.rect.y)
         max_h = max(80, min(self._screen_h - y - 8, max(item.rect.h * 4.0, 200.0)))
-        size = max(self.cfg.min_font_size, int(self.cfg.font_size))
+        size = min(self.cfg.font_size, max(self.cfg.min_font_size, int(item.rect.h * 0.85)))
         layout = self._layout(cr, item.text, max_w - 2 * pad, size)
         tw, th = layout.get_pixel_size()
         while th > max_h and size > self.cfg.min_font_size:
@@ -197,6 +198,16 @@ class GtkOverlay:
         box_h = min(max_h, th + source_h + 2 * pad)
         x = max(0, min(item.rect.x, self._screen_w - box_w - 4))
         y = max(0, min(y, self._screen_h - box_h - 4))
+        # Üst üste binmeyi önle: çakışan kutuları aşağı kaydır.
+        for _ in range(40):
+            if any(not (x + box_w <= ox or ox + ow <= x or y + box_h <= oy or oy + oh <= y)
+                   for (ox, oy, ow, oh) in getattr(self, "_occupied", [])):
+                y += 8
+                if y + box_h > self._screen_h - 4:
+                    break
+            else:
+                break
+        self._occupied.append((x, y, box_w, box_h))
 
         r, g, b = _hex_rgb(self.cfg.bg_color, (0.04, 0.05, 0.08))
         alpha = self.cfg.bg_alpha * (0.55 if item.stale else 1.0)

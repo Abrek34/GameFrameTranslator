@@ -38,8 +38,8 @@ class AnalyzerConfig:
     pixel_threshold: int = 16
     change_trigger: float = 0.0025  # tam karede değişen piksel oranı
     region_change: float = 0.015  # bölge küçük resminde ortalama fark
-    discovery_ms: int = 700
-    heartbeat_ms: int = 3000
+    discovery_ms: int = 500
+    heartbeat_ms: int = 1500
     expire_ms: int = 2000
     region_padding: int = 6
     max_regions: int = 32

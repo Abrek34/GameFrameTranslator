@@ -204,10 +204,12 @@ class Pipeline:
         if len(self.tracker) == 0:
             did_ocr = self._discover(frame, now)
         elif dirty:
-            # Öncelik: bilinen metin bölgesi değiştiyse yalnızca o bölgeyi OCR et.
-            # Yeni bir diyalog kutusu eski bölgeleri değiştirmiyorsa aşağıdaki
-            # keşif/heartbeat yolu devreye girer.
             did_ocr = self._ocr_dirty(frame, dirty, now)
+            # Takip edilmeyen değişen piksel varsa keşif OCR'ı da yap.
+            if diff.changed_bbox is not None:
+                covered = any(r.rect.iou(diff.changed_bbox) > 0.1 for r in self.tracker.regions)
+                if not covered and self.limiter.allow():
+                    did_ocr = self._discover(frame, now) or did_ocr
         elif due and diff.changed_ratio >= self.cfg.analyzer.change_trigger:
             did_ocr = self._discover(frame, now)
         elif now - self._last_discovery_ns >= heartbeat_ns and diff.changed_ratio > 0.0005:
