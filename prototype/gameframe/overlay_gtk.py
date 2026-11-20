@@ -196,43 +196,10 @@ class GtkOverlay:
             source_h += 2
         box_w = min(max_w, max(item.rect.w, tw + 2 * pad))
         box_h = min(max_h, th + source_h + 2 * pad)
+        # Orijinal metin konumunu koru; kutu kaydırma "konum kayması" hissi yaratır.
+        # Üst üste binmeyi azaltmak için kutu boyutu ve metin temizliği yönetilir.
         x = max(0, min(item.rect.x, self._screen_w - box_w - 4))
-        orig_y = max(0, min(y, self._screen_h - box_h - 4))
-        occupied = getattr(self, "_occupied", [])
-
-        def _overlaps(nx: int, ny: int) -> bool:
-            for (ox, oy, ow, oh) in occupied:
-                if not (nx + box_w + 2 <= ox or ox + ow + 2 <= nx or ny + box_h + 2 <= oy or oy + oh + 2 <= ny):
-                    return True
-            return False
-
-        # Uygun boş yer bul: önce orijinal konumdan aşağı, sonra yukarıdan tara.
-        y = orig_y
-        placed = False
-        limit_y = max(0, self._screen_h - box_h - 4)
-        step = 6
-        yy = orig_y
-        while yy <= limit_y:
-            if not _overlaps(x, yy):
-                y = yy
-                placed = True
-                break
-            yy += step
-        if not placed:
-            yy = 4
-            while yy < orig_y:
-                if not _overlaps(x, yy):
-                    y = yy
-                    placed = True
-                    break
-                yy += step
-        if not placed:
-            # Hiç boş yer yoksa ekran içinde tut (çakışma kabul edilir).
-            y = orig_y
-
-        y = max(0, min(y, self._screen_h - box_h - 4))
-        x = max(0, min(x, self._screen_w - box_w - 4))
-        self._occupied.append((x, y, box_w, box_h))
+        y = max(0, min(item.rect.y, self._screen_h - box_h - 4))
 
         r, g, b = _hex_rgb(self.cfg.bg_color, (0.04, 0.05, 0.08))
         alpha = self.cfg.bg_alpha * (0.55 if item.stale else 1.0)
