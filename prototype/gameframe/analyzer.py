@@ -196,10 +196,14 @@ class RegionTracker:
             pixel_hit = bool(diff.changed_bbox and diff.changed_bbox.intersects(region.rect))
             sig_hit = old is not None and sig.delta(old) > self.cfg.region_change
             if pixel_hit or sig_hit:
-                if not region.dirty:
-                    region.dirty = True
-                    region.last_changed_ns = now_ns
-                dirty.append(region)
+                region.dirty_frames += 1
+                if region.dirty_frames >= max(1, int(getattr(self.cfg, "min_dirty_frames", 1))):
+                    if not region.dirty:
+                        region.dirty = True
+                        region.last_changed_ns = now_ns
+                    dirty.append(region)
+            else:
+                region.dirty_frames = 0
         for rid in remove_ids:
             self._regions.pop(rid, None)
         self.expire(now_ns)
@@ -270,6 +274,7 @@ class RegionTracker:
                 match.last_present_ns = now_ns
                 match.misses = 0
                 match.dirty = False
+                match.dirty_frames = 0
                 match.signature = self._signature_for_screen_rect(frame, line.rect)
                 if text != match.text:
                     log.info("Metin değişti [%d]: %r -> %r", match.id, match.text, text)
@@ -338,6 +343,7 @@ class RegionTracker:
         region.last_present_ns = now_ns
         region.misses = 0
         region.dirty = False
+        region.dirty_frames = 0
         region.signature = self._signature_for_screen_rect(frame, rect)
         if merged != region.text:
             log.info("Bölge metni değişti [%d]: %r -> %r", region_id, region.text, merged)

@@ -121,6 +121,7 @@ class Pipeline:
         self._stop = threading.Event()
         self._analyzer: Optional[threading.Thread] = None
         self._last_discovery_ns = 0
+        self._last_analysis_ns = 0
         self._last_publish_sig: tuple = ()
         self._last_publish_ns = 0
         self._last_latency_ms: Optional[float] = None
@@ -173,6 +174,12 @@ class Pipeline:
     # ------------------------------------------------------------------
     def _process(self, frame: Frame) -> None:
         now = time.monotonic_ns()
+        max_fps = float(getattr(self.cfg.analyzer, "max_analysis_fps", 0.0) or 0.0)
+        if max_fps > 0:
+            min_interval_ns = int(1_000_000_000.0 / max_fps)
+            if now - self._last_analysis_ns < min_interval_ns:
+                return
+            self._last_analysis_ns = now
         t0 = time.perf_counter()
         diff = self.differ.compute(frame)
         dirty = self.tracker.observe(frame, self.differ, diff, now)

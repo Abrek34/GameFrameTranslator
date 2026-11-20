@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import logging
 import os
+import subprocess
 import threading
 import time
 from abc import ABC, abstractmethod
@@ -92,7 +93,11 @@ class FrameSource(ABC):
                     next_t = time.monotonic()
             except Exception as exc:  # capture thread must survive transient errors
                 self._last_error = f"{type(exc).__name__}: {exc}"
-                log.warning("Yakalama hatası (%s): %s", self.name, exc)
+                # Aynı hatayı her karede basma; 5 sn'de bir raporla.
+                now = time.monotonic()
+                if not hasattr(self, "_last_err_log") or now - self._last_err_log > 5.0:
+                    self._last_err_log = now
+                    log.warning("Yakalama hatası (%s): %s", self.name, exc)
                 self._stop.wait(0.5)
 
     @property
@@ -150,7 +155,7 @@ class MSSFrameSource(FrameSource):
 # ---------------------------------------------------------------------------
 # XComposite pencere yakalama
 # ---------------------------------------------------------------------------
-def _find_window(dpy, title: str, wm_class: str, window_id: Optional[int]):
+def _find_window(dpy, title: str, wm_class: str, window_id: Optional[int], window_pid: Optional[int] = None):
     from Xlib import X
 
     root = dpy.screen().root
@@ -180,6 +185,14 @@ def _find_window(dpy, title: str, wm_class: str, window_id: Optional[int]):
                 return win
             if want_class and any(want_class in str(k).casefold() for k in klass):
                 return win
+            if window_pid:
+                try:
+                    atom = dpy.intern_atom("_NET_WM_PID")
+                    prop = win.get_full_property(atom, X.AnyPropertyType)
+                    if prop and prop.value and int(prop.value[0]) == int(window_pid):
+                        return win
+                except Exception:
+                    pass
             queue.extend(win.query_tree().children)
         except Exception:
             continue
@@ -208,7 +221,7 @@ class XCompositeFrameSource(FrameSource):
             log.info("X11 bağlantısı: %s", self._dpy.get_display_name())
         if self._target is not None:
             return
-        target = _find_window(self._dpy, self.cfg.window_title, self.cfg.window_class, self.cfg.window_id)
+        target = _find_window(self._dpy, self.cfg.window_title, self.cfg.window_class, self.cfg.window_id, self.cfg.window_pid)
         if target is None:
             raise CaptureError(
                 "Hedef pencere bulunamadı. --window-title / capture.window_title verin "

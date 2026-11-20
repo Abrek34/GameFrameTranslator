@@ -63,6 +63,7 @@ private:
     std::thread analyzer_;
     uint64_t lastVersion_{0};
     int64_t lastDiscoveryNs_{0};
+    int64_t lastAnalysisNs_{0};
     uint64_t lastPublishSig_{0};
     int64_t lastPublishNs_{0};
     std::atomic<double> lastLatencyMs_{0.0};

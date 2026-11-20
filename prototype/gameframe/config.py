@@ -24,6 +24,7 @@ class CaptureConfig:
     window_title: str = ""
     window_class: str = ""
     window_id: Optional[int] = None
+    window_pid: Optional[int] = None
     fps: int = 30
     display: str = ""
     # Root yakalama overlay'i de yakalar. XComposite hedef pencere kullanın.
@@ -43,6 +44,8 @@ class AnalyzerConfig:
     region_padding: int = 6
     max_regions: int = 32
     max_region_ocr_per_cycle: int = 2
+    min_dirty_frames: int = 1
+    max_analysis_fps: float = 15.0
 
 
 @dataclass
@@ -91,7 +94,7 @@ class OverlayConfig:
     text_color: str = "#ffffff"
     show_original: bool = False
     padding: int = 6
-    ttl_ms: int = 6000
+    ttl_ms: int = 2500
     click_through: bool = True
     debug: bool = False
     max_width_scale: float = 1.25

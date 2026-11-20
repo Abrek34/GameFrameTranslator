@@ -118,7 +118,8 @@ Config Config::load(const std::string& path) {
         else if (full == "capture.window_id") {
             if (value.empty()) cfg.capture.windowId = 0;
             else setNumber(section, key, value, cfg.capture.windowId, "uint64");
-        } else if (full == "capture.fps") setNumber(section, key, value, cfg.capture.fps, "int");
+        } else if (full == "capture.window_pid") setNumber(section, key, value, cfg.capture.windowPid, "int");
+        else if (full == "capture.fps") setNumber(section, key, value, cfg.capture.fps, "int");
         else if (full == "capture.display") cfg.capture.display = value;
         else if (full == "capture.allow_root_with_overlay") cfg.capture.allowRootWithOverlay = toBool(value);
 
@@ -133,6 +134,7 @@ Config Config::load(const std::string& path) {
         else if (full == "analyzer.region_padding") setNumber(section, key, value, cfg.analyzer.regionPadding, "int");
         else if (full == "analyzer.max_regions") setNumber(section, key, value, cfg.analyzer.maxRegions, "int");
         else if (full == "analyzer.max_region_ocr_per_cycle") setNumber(section, key, value, cfg.analyzer.maxRegionOcrPerCycle, "int");
+        else if (full == "analyzer.max_analysis_fps") setNumber(section, key, value, cfg.analyzer.maxAnalysisFps, "double");
 
         else if (full == "ocr.backend") cfg.ocr.backend = value;
         else if (full == "ocr.lang") cfg.ocr.lang = value;

@@ -159,6 +159,7 @@ class TextRegion:
     revision: int = 0
     stale: bool = False
     dirty: bool = False
+    dirty_frames: int = 0
     misses: int = 0
     first_seen_ns: int = 0
     last_changed_ns: int = 0

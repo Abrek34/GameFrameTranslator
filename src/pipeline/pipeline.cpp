@@ -92,6 +92,11 @@ void Pipeline::analyzeLoop() {
 
 void Pipeline::process(const Frame& frame) {
     const int64_t now = nowNs();
+    if (cfg_.analyzer.maxAnalysisFps > 0.0) {
+        const int64_t minInterval = static_cast<int64_t>(1e9 / cfg_.analyzer.maxAnalysisFps);
+        if (now - lastAnalysisNs_ < minInterval) return;
+        lastAnalysisNs_ = now;
+    }
     const auto t0 = std::chrono::steady_clock::now();
     const DiffResult diff = differ_.compute(frame);
     const auto dirty = tracker_.observe(frame, differ_, diff, now);

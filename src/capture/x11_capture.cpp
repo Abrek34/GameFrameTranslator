@@ -83,8 +83,20 @@ Window X11Capture::findWindow() {
             if (hint.res_name) XFree(hint.res_name);
             if (hint.res_class) XFree(hint.res_class);
         }
+        bool pidMatch = false;
+        if (cfg_.windowPid != 0) {
+            Atom netPid = XInternAtom(dpy_, "_NET_WM_PID", True);
+            if (netPid != None) {
+                Atom type; int fmt; unsigned long n, bytes; unsigned char* data = nullptr;
+                if (XGetWindowProperty(dpy_, w, netPid, 0, 1, False, XA_CARDINAL, &type, &fmt, &n, &bytes, &data) == Success && data && n>0) {
+                    pidMatch = (*reinterpret_cast<unsigned long*>(data) == static_cast<unsigned long>(cfg_.windowPid));
+                }
+                if (data) XFree(data);
+            }
+        }
         if ((!wantTitle.empty() && contains(wname, wantTitle)) ||
-            (!wantClass.empty() && contains(cls, wantClass))) {
+            (!wantClass.empty() && contains(cls, wantClass)) ||
+            (cfg_.windowPid != 0 && pidMatch)) {
             return w;
         }
         Window r2, p2;

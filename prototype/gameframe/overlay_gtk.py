@@ -179,7 +179,7 @@ class GtkOverlay:
         )
         max_w = max(80, max_w)
         y = max(0, item.rect.y)
-        max_h = max(60, min(self._screen_h - y - 8, max(item.rect.h * 2.8, 140.0)))
+        max_h = max(80, min(self._screen_h - y - 8, max(item.rect.h * 4.0, 200.0)))
         size = max(self.cfg.min_font_size, int(self.cfg.font_size))
         layout = self._layout(cr, item.text, max_w - 2 * pad, size)
         tw, th = layout.get_pixel_size()

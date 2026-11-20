@@ -145,7 +145,197 @@ BUILTIN_DICTIONARY: dict[str, str] = {
     "quest complete": "Görev tamamlandı",
     "you died": "Öldün",
     "the blacksmith is missing": "Demirci kayıp",
+    "save": "Kaydet",
+    "load": "Yükle",
+    "delete": "Sil",
+    "confirm": "Onayla",
+    "apply": "Uygula",
+    "reset": "Sıfırla",
+    "default": "Varsayılan",
+    "auto": "Otomatik",
+    "on": "Açık",
+    "off": "Kapalı",
+    "enabled": "Etkin",
+    "disabled": "Devre dışı",
+    "low": "Düşük",
+    "medium": "Orta",
+    "high": "Yüksek",
+    "ultra": "Ultra",
+    "quality": "Kalite",
+    "performance": "Performans",
+    "balanced": "Dengeli",
+    "fullscreen": "Tam Ekran",
+    "windowed": "Pencereli",
+    "borderless": "Çerçevesiz",
+    "vsync": "Dikey Senkronizasyon",
+    "fps": "FPS",
+    "fov": "Görüş Açısı",
+    "sensitivity": "Hassasiyet",
+    "invert": "Ters Çevir",
+    "mouse": "Fare",
+    "keyboard": "Klavye",
+    "controller": "Kumanda",
+    "audio": "Ses",
+    "music": "Müzik",
+    "sfx": "Efektler",
+    "voice": "Sesli Diyalog",
+    "subtitles": "Altyazılar",
+    "language": "Dil",
+    "graphics": "Grafik",
+    "texture": "Doku",
+    "shadow": "Gölge",
+    "lighting": "Aydınlatma",
+    "effects": "Efektler",
+    "post": "İşlem Sonrası",
+    "anti": "Kenar Yumuşatma",
+    "aliasing": "Tırtıklanma",
+    "resolution": "Çözünürlük",
+    "refresh": "Yenileme",
+    "rate": "Hızı",
+    "display": "Görüntü",
+    "monitor": "Monitör",
+    "brightness": "Parlaklık",
+    "contrast": "Karşıtlık",
+    "gamma": "Gama",
+    "color": "Renk",
+    "blind": "Renk Körü",
+    "mode": "Modu",
+    "accessibility": "Erişilebilirlik",
+    "text": "Metin",
+    "size": "Boyut",
+    "scale": "Ölçek",
+    "ui": "Arayüz",
+    "hud": "HUD",
+    "minimap": "Mini Harita",
+    "compass": "Pusula",
+    "quest": "Görev",
+    "log": "Günlük",
+    "map": "Harita",
+    "inventory": "Envanter",
+    "character": "Karakter",
+    "stats": "İstatistikler",
+    "skills": "Yetenekler",
+    "abilities": "Kabiliyetler",
+    "perks": "Avantajlar",
+    "talents": "Yetenekler",
+    "equipment": "Ekipman",
+    "weapons": "Silahlar",
+    "armor": "Zırh",
+    "items": "Eşyalar",
+    "consumables": "Tüketilebilirler",
+    "crafting": "Üretim",
+    "materials": "Malzemeler",
+    "recipes": "Tarifler",
+    "blueprints": "Planlar",
+    "upgrades": "Yükseltmeler",
+    "enhancements": "Geliştirmeler",
+    "sockets": "Yuvalar",
+    "gems": "Mücevherler",
+    "runes": "Rünler",
+    "enchantments": "Büyülemeler",
+    "durability": "Dayanıklılık",
+    "weight": "Ağırlık",
+    "value": "Değer",
+    "rarity": "Nadirlik",
+    "common": "Yaygın",
+    "uncommon": "Yaygın Olmayan",
+    "rare": "Nadir",
+    "epic": "Epik",
+    "legendary": "Efsanevi",
+    "mythic": "Mistik",
+    "unique": "Benzersiz",
+    "set": "Set",
+    "bonus": "Bonus",
+    "effect": "Etki",
+    "damage": "Hasar",
+    "defense": "Savunma",
+    "health": "Can",
+    "mana": "Mana",
+    "stamina": "Dayanıklılık",
+    "energy": "Enerji",
+    "rage": "Öfke",
+    "focus": "Odak",
+    "combo": "Kombo",
+    "critical": "Kritik",
+    "chance": "Şans",
+    "rate": "Oran",
+    "speed": "Hız",
+    "movement": "Hareket",
+    "attack": "Saldırı",
+    "defense": "Savunma",
+    "block": "Bloklama",
+    "parry": "Karşılama",
+    "dodge": "Kaçınma",
+    "roll": "Yuvarlanma",
+    "jump": "Zıplama",
+    "climb": "Tırmanma",
+    "swim": "Yüzme",
+    "fly": "Uçuş",
+    "sprint": "Koşma",
+    "walk": "Yürüme",
+    "crouch": "Eğilme",
+    "stealth": "Gizlilik",
+    "sneak": "Sinsi",
+    "hide": "Gizlenme",
+    "search": "Arama",
+    "interact": "Etkileşim",
+    "use": "Kullan",
+    "equip": "Kuşan",
+    "unequip": "Çıkar",
+    "drop": "Bırak",
+    "pickup": "Al",
+    "loot": "Ganimet",
+    "collect": "Topla",
+    "gather": "Topla",
+    "harvest": "Hasat",
+    "mine": "Madencilik",
+    "chop": "Kesme",
+    "fish": "Balıkçılık",
+    "hunt": "Avlanma",
+    "track": "İz Sürme",
+    "explore": "Keşfet",
+    "discover": "Keşfet",
+    "unlock": "Aç",
+    "lock": "Kilitle",
+    "open": "Aç",
+    "close": "Kapat",
+    "enter": "Gir",
+    "exit": "Çık",
+    "leave": "Ayrıl",
+    "return": "Dön",
+    "back": "Geri",
+    "forward": "İleri",
+    "next": "Sonraki",
+    "previous": "Önceki",
+    "skip": "Atla",
+    "continue": "Devam",
+    "pause": "Duraklat",
+    "resume": "Devam Et",
+    "restart": "Yeniden Başlat",
+    "retry": "Tekrar Dene",
+    "quit": "Çık",
+    "exit": "Çıkış",
+    "save": "Kaydet",
+    "load": "Yükle",
+    "new": "Yeni",
+    "game": "Oyun",
+    "start": "Başla",
+    "menu": "Menü",
+    "options": "Seçenekler",
+    "settings": "Ayarlar",
+    "credits": "Emeği Geçenler",
+    "help": "Yardım",
+    "tutorial": "Eğitim",
+    "training": "Antrenman",
+    "practice": "Pratik",
+    "challenge": "Meydan Okuma",
+    "trial": "Deneme",
+    "test": "Test",
+    "demo": "Demo",
+    "preview": "Önizleme",
+    "trial": "Deneme",
 }
+
 
 
 class DictionaryTranslator:
@@ -177,7 +367,26 @@ class DictionaryTranslator:
     def translate(self, text: str, source_lang: str, target_lang: str) -> Optional[str]:
         if target_lang != "tr":
             return None
-        return self._map.get(normalize_text(text).casefold())
+        norm = normalize_text(text)
+        hit = self._map.get(norm.casefold())
+        if hit:
+            return hit
+        # Kelime kelime çeviri: bilinen kelimeler çevrilir, bilinmeyenler aynen kalır.
+        words = norm.split()
+        if len(words) <= 1:
+            return None
+        out = []
+        changed = False
+        for w in words:
+            tr = self._map.get(w.casefold().strip(".,!?;:"))
+            if tr:
+                out.append(tr)
+                changed = True
+            else:
+                out.append(w)
+        if changed:
+            return " ".join(out)
+        return None
 
 
 # ---------------------------------------------------------------------------
@@ -207,20 +416,29 @@ class GoogleWebTranslator:
                 "Accept": "application/json",
             },
         )
-        try:
-            with urllib.request.urlopen(req, timeout=float(self.cfg.timeout_s)) as resp:
-                data = json.loads(resp.read().decode("utf-8", "replace"))
-            segments = data[0] if isinstance(data, list) and data else []
-            out = "".join(
-                str(seg[0]) for seg in segments if isinstance(seg, list) and seg and seg[0]
-            ).strip()
-            return out or None
-        except (urllib.error.URLError, TimeoutError, json.JSONDecodeError, OSError) as exc:
-            log.warning("Google çeviri hatası: %s", exc)
-            return None
-        except Exception as exc:
-            log.warning("Google çeviri beklenmeyen hata: %s", exc)
-            return None
+        for attempt in range(2):
+            try:
+                with urllib.request.urlopen(req, timeout=float(self.cfg.timeout_s)) as resp:
+                    data = json.loads(resp.read().decode("utf-8", "replace"))
+                segments = data[0] if isinstance(data, list) and data else []
+                out = "".join(
+                    str(seg[0]) for seg in segments if isinstance(seg, list) and seg and seg[0]
+                ).strip()
+                return out or None
+            except urllib.error.HTTPError as exc:
+                if exc.code == 429 and attempt == 0:
+                    log.warning("Google 429 (rate limit); 1.2s beklenip yeniden denenecek")
+                    time.sleep(1.2)
+                    continue
+                log.warning("Google çeviri hatası: %s", exc)
+                return None
+            except (urllib.error.URLError, TimeoutError, json.JSONDecodeError, OSError) as exc:
+                log.warning("Google çeviri hatası: %s", exc)
+                return None
+            except Exception as exc:
+                log.warning("Google çeviri beklenmeyen hata: %s", exc)
+                return None
+        return None
 
 
 class LibreTranslateTranslator:

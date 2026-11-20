@@ -17,6 +17,7 @@ struct CaptureConfig {
     std::string windowTitle;
     std::string windowClass;
     uint64_t windowId{0};
+    int windowPid{0};
     int fps{30};
     std::string display;
     bool allowRootWithOverlay{false};
@@ -34,6 +35,7 @@ struct AnalyzerConfig {
     int regionPadding{6};
     int maxRegions{32};
     int maxRegionOcrPerCycle{2};
+    double maxAnalysisFps{15.0};
 };
 
 struct OcrConfig {
@@ -79,7 +81,7 @@ struct OverlayConfig {
     std::string textColor{"#ffffff"};
     bool showOriginal{false};
     int padding{6};
-    int ttlMs{6000};
+    int ttlMs{2500};
     bool clickThrough{true};
     bool debug{false};
     double maxWidthScale{1.25};
